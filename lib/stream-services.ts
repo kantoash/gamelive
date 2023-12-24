@@ -24,15 +24,24 @@ export const getStreams = async () => {
   if (userId) {
     streams = await db.stream.findMany({
       where: {
-        user: {
-          NOT: {
-            blocking: {
-              some: {
-                blockedId: userId,
-              }
-            }
-          }
-        }
+        AND: [
+          {
+            NOT: {
+              userId,
+            },
+          },
+          {
+            user: {
+              NOT: {
+                blocking: {
+                  some: {
+                    blockedId: userId,
+                  },
+                },
+              },
+            },
+          },
+        ],
       },
       select: {
         id: true,
@@ -47,7 +56,7 @@ export const getStreams = async () => {
         },
         {
           updatedAt: "desc",
-        }
+        },
       ],
     });
   } else {
@@ -65,8 +74,8 @@ export const getStreams = async () => {
         },
         {
           updatedAt: "desc",
-        }
-      ]
+        },
+      ],
     });
   }
 
